@@ -1,0 +1,10 @@
+name: app
+title:
+username: alxwen711
+account: alxwen711
+server: connect.posit.cloud
+hostUrl: https://api.connect.posit.cloud/v1
+appId: 019ceaf3-2b34-ec69-bea2-f55e009af81b
+bundleId:
+url: https://connect.posit.cloud/alxwen711/content/019ceaf3-2b34-ec69-bea2-f55e009af81b
+version: 1
