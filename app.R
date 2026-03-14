@@ -6,7 +6,7 @@ library(tidyverse)
 library(gitlink)
 
 # Read data from a CSV file and perform data preprocessing
-expansions <- read_csv("../data/expansions.csv") |>
+expansions <- read_csv("data/expansions.csv") |>
   mutate(evaluation = factor(evaluation, levels = c("None", "A", "B")),
          propensity = factor(propensity, levels = c("Good", "Average", "Poor")))
 
