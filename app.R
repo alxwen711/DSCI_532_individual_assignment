@@ -6,7 +6,8 @@ library(tidyverse)
 library(gitlink)
 
 # Read dataset
-sales_df <- read_csv("data/raw/sales_and_customer_insights.csv")
+sales_df <- read_csv("data/raw/sales_and_customer_insights.csv") |>
+  mutate(Value_At_Risk = Churn_Probability*Lifetime_Value)
 
 # Set the default theme for ggplot2 plots
 ggplot2::theme_set(ggplot2::theme_minimal())
@@ -33,11 +34,42 @@ ui <- page_sidebar(
                     sliderInput("maxchurnrate","Select Maximum Churn Rate",value = 1, min = 0, max = 1, step = 0.01)),
   
   # Layout non-sidebar elements
-  layout_columns()
+  layout_columns(
+    value_box(title = "Average Lifetime Value",
+              value = textOutput("kpi_value"),
+              theme_color = "primary"),
+    value_box(title = "Average Value at Risk",
+              value = textOutput("kpi_risk"),
+              theme_color = "primary"),
+    value_box(title = "Datapoints In Max Churn Filter",
+              value = textOutput("kpi_count"),
+              theme_color = "secondary"),
+    col_widths = c(4,4,4)
+  )
 )
 
 # Define the Shiny server function
 server <- function(input, output) {
+  
+  filtered_sales_df <- reactive({
+    sales_df |>
+      filter(Churn_Probability <= input$maxchurnrate)
+  })
+  
+  output$kpi_value <- renderText({
+    result <- round(mean(filtered_sales_df()$Lifetime_Value),2)
+    as.character(result)
+  })
+  
+  output$kpi_risk <- renderText({
+    result <- round(mean(filtered_sales_df()$Value_At_Risk),2)
+    as.character(result)
+  })
+  
+  output$kpi_count <- renderText({
+    result <- nrow(filtered_sales_df())
+    as.character(result)
+  })
   
 }
 
