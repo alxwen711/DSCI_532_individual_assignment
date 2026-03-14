@@ -29,7 +29,7 @@ ui <- page_sidebar(
   title = "Salescope Churn Rate Analysis Dashboard",
   
   # Add sidebar elements
-  sidebar = sidebar(title = "Place a filter here",
+  sidebar = sidebar(title = "Filter(s)",
                     class ="bg-secondary",
                     sliderInput("maxchurnrate","Select Maximum Churn Rate",value = 1, min = 0, max = 1, step = 0.01)),
   
@@ -44,7 +44,12 @@ ui <- page_sidebar(
     value_box(title = "Datapoints In Max Churn Filter",
               value = textOutput("kpi_count"),
               theme_color = "secondary"),
-    col_widths = c(4,4,4)
+    card(
+      card_header("Churn Risk Plot"),
+      plotOutput("scatter")
+    ),
+    col_widths = c(4,4,4,12),
+    row_heights = c(1.5,3)
   )
 )
 
@@ -71,6 +76,15 @@ server <- function(input, output) {
     as.character(result)
   })
   
+  output$scatter <- renderPlot({
+    ggplot(filtered_sales_df(), aes(x = Lifetime_Value, y = Time_Between_Purchases, color = Retention_Strategy)) +
+      geom_point() +
+      theme(axis.title = element_blank()) +
+      labs(color = "Retension Strategy",
+           x = "Customer Lifetime Value ($)",
+           y = "Days Between Purchases",
+           title = "Customer Lifetime Value Against Purchase Frequency")
+  })
 }
 
 # Create the Shiny app
